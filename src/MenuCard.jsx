@@ -1,10 +1,9 @@
 import React, { useState } from "react";
 import { DEFAULT_IMAGE } from "./utils";
 
-export default function MenuCard({ item, onVote, onDelete, isTopRank }) {
+export default function MenuCard({ item, onVote, onDelete, isTopRank, isVoteClosed }) {
   const [imgSrc, setImgSrc] = useState(item.imageUrl || DEFAULT_IMAGE);
 
-  // หากรูปโหลดไม่ขึ้น ให้สลับไปใช้รูปสำรองอัตโนมัติ
   const handleError = () => {
     setImgSrc(DEFAULT_IMAGE);
   };
@@ -12,15 +11,15 @@ export default function MenuCard({ item, onVote, onDelete, isTopRank }) {
   return (
     <div
       style={{
-        border: isTopRank ? "2px solid #f59e0b" : "1px solid #e5e7eb",
+        border: isTopRank && item.votes > 0 ? "2px solid #f59e0b" : "1px solid #fed7aa",
         borderRadius: "16px",
         overflow: "hidden",
         backgroundColor: "#ffffff",
-        boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
+        boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
         position: "relative"
       }}
     >
-      {/* Badge แสดงอันดับ 1 */}
+      {/* Badge อันดับ 1 */}
       {isTopRank && item.votes > 0 && (
         <span
           style={{
@@ -41,7 +40,7 @@ export default function MenuCard({ item, onVote, onDelete, isTopRank }) {
       )}
 
       {/* รูปภาพเมนู */}
-      <div style={{ height: "160px", backgroundColor: "#f3f4f6" }}>
+      <div style={{ height: "160px", backgroundColor: "#fff7ed" }}>
         <img
           src={imgSrc}
           alt={item.title}
@@ -50,10 +49,10 @@ export default function MenuCard({ item, onVote, onDelete, isTopRank }) {
         />
       </div>
 
-      {/* รายละเอียดข้อมูล */}
+      {/* รายละเอียด */}
       <div style={{ padding: "16px" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <h3 style={{ margin: 0, fontSize: "18px", color: "#1f2937" }}>{item.title}</h3>
+          <h3 style={{ margin: 0, fontSize: "17px", color: "#1f2937" }}>{item.title}</h3>
           <span style={{ color: "#ea580c", fontWeight: "bold", fontSize: "16px" }}>
             ฿{item.price}
           </span>
@@ -68,7 +67,7 @@ export default function MenuCard({ item, onVote, onDelete, isTopRank }) {
           }}
         >
           <span style={{ fontSize: "14px", color: "#6b7280" }}>
-            คะแนนโหวต: <strong style={{ color: "#111827", fontSize: "18px" }}>{item.votes}</strong>
+            คะแนน: <strong style={{ color: "#111827", fontSize: "18px" }}>{item.votes}</strong>
           </span>
 
           <div style={{ display: "flex", gap: "8px" }}>
@@ -84,19 +83,23 @@ export default function MenuCard({ item, onVote, onDelete, isTopRank }) {
             >
               🗑️
             </button>
+            
+            {/* ปุ่มโหวต (ปิดใช้งานเมื่อปิดโหวตครบ 8 คน) */}
             <button
               onClick={() => onVote(item.id)}
+              disabled={isVoteClosed}
               style={{
-                backgroundColor: "#f97316",
+                backgroundColor: isVoteClosed ? "#9ca3af" : "#f97316",
                 color: "#ffffff",
                 border: "none",
                 padding: "8px 16px",
                 borderRadius: "8px",
                 fontWeight: "bold",
-                cursor: "pointer"
+                cursor: isVoteClosed ? "not-allowed" : "pointer",
+                opacity: isVoteClosed ? 0.7 : 1
               }}
             >
-              🗳️ โหวต
+              {isVoteClosed ? "🔒 ปิดโหวต" : "🗳️ โหวต"}
             </button>
           </div>
         </div>

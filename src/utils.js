@@ -1,7 +1,7 @@
 // รูปสำรองกรณีไม่มีรูปภาพ
 export const DEFAULT_IMAGE = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&q=80&w=500";
 
-// รายการเมนูเริ่มต้นในระบบ (12 เมนู)
+// รายการเมนูเริ่มต้นในระบบ (12 เมนู พร้อมรูปภาพตรงตามประเภท)
 export const INITIAL_MENUS = [
   { id: "1", title: "กะเพราหมูกรอบ ไข่ดาว", price: 65, imageUrl: "https://images.unsplash.com/photo-1589301760014-d929f3979dbc?auto=format&fit=crop&q=80&w=500", votes: 0 },
   { id: "2", title: "ข้าวมันไก่ต้ม/ทอด", price: 55, imageUrl: "https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?auto=format&fit=crop&q=80&w=500", votes: 0 },
@@ -12,9 +12,9 @@ export const INITIAL_MENUS = [
   { id: "7", title: "ผัดไทยกุ้งสด", price: 65, imageUrl: "https://images.unsplash.com/photo-1559847844-5315695dadae?auto=format&fit=crop&q=80&w=500", votes: 0 },
   { id: "8", title: "ข้าวหน้าเป็ดย่าง", price: 70, imageUrl: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&q=80&w=500", votes: 0 },
   { id: "9", title: "ยำวุ้นเส้นหมูสับแน่นๆ", price: 60, imageUrl: "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&q=80&w=500", votes: 0 },
-  { id: "10", title: "ชาไทยเย็น ชาตรามือ", price: 35, imageUrl: "https://images.unsplash.com/photo-1517701604599-bb29b565090c?auto=format&fit=crop&q=80&w=500", votes: 0 },
+  { id: "10", title: "ชาไทยเย็น ชาตรามือ", price: 35, imageUrl: "https://images.unsplash.com/photo-1558857563-b371033873b8?auto=format&fit=crop&q=80&w=500", votes: 0 },
   { id: "11", title: "อเมริกาโน่เย็น / ลาเต้", price: 45, imageUrl: "https://images.unsplash.com/photo-1517701604599-bb29b565090c?auto=format&fit=crop&q=80&w=500", votes: 0 },
-  { id: "12", title: "ชามะนาวเย็น ดับร้อน", price: 30, imageUrl: "https://images.unsplash.com/photo-1517701604599-bb29b565090c?auto=format&fit=crop&q=80&w=500", votes: 0 }
+  { id: "12", title: "ชามะนาวเย็น ดับร้อน", price: 30, imageUrl: "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?auto=format&fit=crop&q=80&w=500", votes: 0 }
 ];
 
 // ย่อรูปภาพก่อนบันทึกลง LocalStorage
