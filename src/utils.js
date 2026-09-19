@@ -1,9 +1,8 @@
-// รูปสำรองกรณีไม่มีรูปภาพ
 export const DEFAULT_IMAGE = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&q=80&w=500";
 
-// รายการเมนูเริ่มต้นในระบบ (12 เมนู พร้อมรูปภาพตรงตามประเภท)
+// รายการเมนูเริ่มต้นในระบบ 
 export const INITIAL_MENUS = [
-  { id: "1", title: "กะเพราหมูกรอบ ไข่ดาว", price: 65, imageUrl: "https://images.unsplash.com/photo-1589301760014-d929f3979dbc?auto=format&fit=crop&q=80&w=500", votes: 0 },
+  { id: "1", title: "สลัดผักรวม", price: 60, imageUrl: "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&q=80&w=500", votes: 0 },
   { id: "2", title: "ข้าวมันไก่ต้ม/ทอด", price: 55, imageUrl: "https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?auto=format&fit=crop&q=80&w=500", votes: 0 },
   { id: "3", title: "ข้าวหมูแดง หมูกรอบ", price: 60, imageUrl: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&q=80&w=500", votes: 0 },
   { id: "4", title: "ก๋วยเตี๋ยวต้มยำตำลึง", price: 50, imageUrl: "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&q=80&w=500", votes: 0 },
