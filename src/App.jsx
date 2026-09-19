@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { INITIAL_MENUS, compressImage } from "./utils";
 import MenuCard from "./MenuCard";
 
-const STORAGE_KEY = "office_food_votes_v1";
+const STORAGE_KEY = "office_food_votes_v2";
 
 export default function App() {
   const [menuList, setMenuList] = useState([]);
@@ -28,7 +28,7 @@ export default function App() {
     }
   }, []);
 
-  // 2. บันทึกข้อมูลลง LocalStorage เมื่อมีการเปลี่ยนแปลง
+  // 2. บันทึกข้อมูลลง LocalStorage
   useEffect(() => {
     if (menuList.length > 0) {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(menuList));
@@ -85,9 +85,9 @@ export default function App() {
     }
   };
 
-  // คืนค่าเมนูเริ่มต้น
+  // คืนค่าเมนูเริ่มต้น 12 เมนู
   const handleRestoreDefaults = () => {
-    if (window.confirm("ต้องการโหลดรายการเมนูเริ่มต้นกลับมาใช่ไหม?")) {
+    if (window.confirm("ต้องการโหลดรายการเมนูเริ่มต้นทั้งหมด (12 เมนู) กลับมาใช่ไหม?")) {
       setMenuList(INITIAL_MENUS);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(INITIAL_MENUS));
     }
@@ -97,7 +97,7 @@ export default function App() {
   const sortedMenuList = [...menuList].sort((a, b) => b.votes - a.votes);
 
   return (
-    <div style={{ maxWidth: "800px", margin: "0 auto", padding: "24px 16px", fontFamily: "sans-serif" }}>
+    <div style={{ maxWidth: "900px", margin: "0 auto", padding: "24px 16px", fontFamily: "sans-serif" }}>
       {/* Header */}
       <header style={{ textAlign: "center", marginBottom: "24px" }}>
         <h1 style={{ fontSize: "28px", color: "#111827", margin: "0 0 8px 0" }}>🍱 เที่ยงนี้กินอะไรดี?</h1>
@@ -117,7 +117,7 @@ export default function App() {
             onClick={handleRestoreDefaults}
             style={{ backgroundColor: "#e5e7eb", color: "#374151", border: "none", padding: "8px 12px", borderRadius: "8px", cursor: "pointer", fontSize: "12px" }}
           >
-            🔄 รีเซ็ตเมนูเริ่มต้น
+            🔄 รีเซ็ตเมนูเริ่มต้น (12 เมนู)
           </button>
         </div>
 
@@ -166,8 +166,8 @@ export default function App() {
         </form>
       )}
 
-      {/* Menu Cards */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: "16px" }}>
+      {/* Menu Cards (ล็อกเป็น 2 Columns ชัดเจน) */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "16px" }}>
         {sortedMenuList.map((item, index) => (
           <MenuCard
             key={item.id}
