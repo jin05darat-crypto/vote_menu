@@ -1,122 +1,183 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import './App.css'
+import React, { useState, useEffect } from "react";
+import { INITIAL_MENUS, compressImage } from "./utils";
+import MenuCard from "./MenuCard";
 
-function App() {
-  const [count, setCount] = useState(0)
+const STORAGE_KEY = "office_food_votes_v1";
+
+export default function App() {
+  const [menuList, setMenuList] = useState([]);
+  const [showForm, setShowForm] = useState(false);
+
+  // Form State
+  const [title, setTitle] = useState("");
+  const [price, setPrice] = useState("");
+  const [imageFile, setImageFile] = useState(null);
+
+  // 1. โหลดข้อมูลจาก LocalStorage หรือใช้ค่าเริ่มต้น
+  useEffect(() => {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        setMenuList(parsed.length > 0 ? parsed : INITIAL_MENUS);
+      } catch (e) {
+        setMenuList(INITIAL_MENUS);
+      }
+    } else {
+      setMenuList(INITIAL_MENUS);
+    }
+  }, []);
+
+  // 2. บันทึกข้อมูลลง LocalStorage เมื่อมีการเปลี่ยนแปลง
+  useEffect(() => {
+    if (menuList.length > 0) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(menuList));
+    }
+  }, [menuList]);
+
+  // เพิ่มเมนูใหม่
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!title.trim() || !price) return alert("กรุณากรอกชื่อเมนูและราคา");
+
+    let imageUrl = "";
+    if (imageFile) {
+      imageUrl = await compressImage(imageFile);
+    }
+
+    const newMenu = {
+      id: Date.now().toString(),
+      title: title.trim(),
+      price: Number(price),
+      imageUrl,
+      votes: 0
+    };
+
+    setMenuList([newMenu, ...menuList]);
+    setTitle("");
+    setPrice("");
+    setImageFile(null);
+    setShowForm(false);
+  };
+
+  // กดโหวต
+  const handleVote = (id) => {
+    setMenuList(
+      menuList.map((item) =>
+        item.id === id ? { ...item, votes: item.votes + 1 } : item
+      )
+    );
+  };
+
+  // ลบเมนู
+  const handleDelete = (id) => {
+    if (window.confirm("ยืนยันการลบเมนูนี้นะครับ?")) {
+      const updated = menuList.filter((item) => item.id !== id);
+      setMenuList(updated);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+    }
+  };
+
+  // รีเซ็ตผลโหวตทั้งหมด
+  const handleResetVotes = () => {
+    if (window.confirm("ต้องการล้างคะแนนโหวตทั้งหมดเพื่อเริ่มรอบใหม่ใช่ไหม?")) {
+      setMenuList(menuList.map((item) => ({ ...item, votes: 0 })));
+    }
+  };
+
+  // คืนค่าเมนูเริ่มต้น
+  const handleRestoreDefaults = () => {
+    if (window.confirm("ต้องการโหลดรายการเมนูเริ่มต้นกลับมาใช่ไหม?")) {
+      setMenuList(INITIAL_MENUS);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(INITIAL_MENUS));
+    }
+  };
+
+  // เรียงลำดับตามคะแนนโหวตจากมากไปน้อย
+  const sortedMenuList = [...menuList].sort((a, b) => b.votes - a.votes);
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <div style={{ maxWidth: "800px", margin: "0 auto", padding: "24px 16px", fontFamily: "sans-serif" }}>
+      {/* Header */}
+      <header style={{ textAlign: "center", marginBottom: "24px" }}>
+        <h1 style={{ fontSize: "28px", color: "#111827", margin: "0 0 8px 0" }}>🍱 เที่ยงนี้กินอะไรดี?</h1>
+        <p style={{ color: "#4b5563", margin: 0, fontSize: "14px" }}>เปิดโหวตเมนูอาหารประจำออฟฟิศ</p>
+      </header>
 
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
+      {/* Control Buttons */}
+      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "20px", flexWrap: "wrap", gap: "10px" }}>
+        <div style={{ display: "flex", gap: "8px" }}>
+          <button
+            onClick={() => setShowForm(!showForm)}
+            style={{ backgroundColor: "#111827", color: "#fff", border: "none", padding: "8px 16px", borderRadius: "8px", cursor: "pointer" }}
+          >
+            {showForm ? "✖️ ปิดฟอร์ม" : "➕ เพิ่มเมนูใหม่"}
+          </button>
+          <button
+            onClick={handleRestoreDefaults}
+            style={{ backgroundColor: "#e5e7eb", color: "#374151", border: "none", padding: "8px 12px", borderRadius: "8px", cursor: "pointer", fontSize: "12px" }}
+          >
+            🔄 รีเซ็ตเมนูเริ่มต้น
+          </button>
         </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+        {menuList.length > 0 && (
+          <button
+            onClick={handleResetVotes}
+            style={{ backgroundColor: "transparent", color: "#ef4444", border: "none", cursor: "pointer", fontSize: "14px" }}
+          >
+            🧹 ล้างคะแนนโหวต
+          </button>
+        )}
+      </div>
+
+      {/* Form Add Menu */}
+      {showForm && (
+        <form onSubmit={handleSubmit} style={{ backgroundColor: "#f9fafb", padding: "16px", borderRadius: "12px", marginBottom: "20px", border: "1px solid #e5e7eb" }}>
+          <h3 style={{ margin: "0 0 12px 0", fontSize: "16px" }}>เพิ่มเมนูอาหาร</h3>
+          <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+            <input
+              type="text"
+              placeholder="ชื่อเมนู *"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              style={{ padding: "8px", borderRadius: "6px", border: "1px solid #ccc" }}
+            />
+            <input
+              type="number"
+              placeholder="ราคา (บาท) *"
+              value={price}
+              onChange={(e) => setPrice(e.target.value)}
+              style={{ padding: "8px", borderRadius: "6px", border: "1px solid #ccc" }}
+            />
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => setImageFile(e.target.files[0])}
+              style={{ fontSize: "14px" }}
+            />
+            <button
+              type="submit"
+              style={{ backgroundColor: "#f97316", color: "#fff", border: "none", padding: "10px", borderRadius: "6px", fontWeight: "bold", cursor: "pointer", marginTop: "4px" }}
+            >
+              บันทึกเมนู
+            </button>
+          </div>
+        </form>
+      )}
+
+      {/* Menu Cards */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: "16px" }}>
+        {sortedMenuList.map((item, index) => (
+          <MenuCard
+            key={item.id}
+            item={item}
+            onVote={handleVote}
+            onDelete={handleDelete}
+            isTopRank={index === 0}
+          />
+        ))}
+      </div>
+    </div>
+  );
 }
-
-export default App
